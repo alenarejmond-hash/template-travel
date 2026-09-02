@@ -70,51 +70,68 @@ Error generating stack: `+e.message+`
       spark-wander var(--wt) linear 0.8s forwards;
   }
   
-  /* Эффект сгорания бумаги */
-  @keyframes burn-mask-reveal {
-    0% { -webkit-mask-position: 100% 0%; mask-position: 100% 0%; }
-    100% { -webkit-mask-position: 0% 100%; mask-position: 0% 100%; }
+  /* Эффект сгорания бумаги (Оптимизировано для Safari/Mobile) */
+  @media (min-width: 640px) {
+    @keyframes burn-mask-reveal {
+      0% { -webkit-mask-position: 100% 0%; mask-position: 100% 0%; }
+      100% { -webkit-mask-position: 0% 100%; mask-position: 0% 100%; }
+    }
+    @keyframes burn-fire-scan {
+      0% { background-position: 100% 0%; opacity: 0; }
+      5% { opacity: 1; }
+      95% { opacity: 1; }
+      100% { background-position: 0% 100%; opacity: 0; }
+    }
+    .smooth-mask-wipe {
+      -webkit-mask-image: linear-gradient(225deg, transparent 47%, rgba(0,0,0,0.6) 49%, black 51%);
+      mask-image: linear-gradient(225deg, transparent 47%, rgba(0,0,0,0.6) 49%, black 51%);
+      -webkit-mask-size: 300% 300%;
+      mask-size: 300% 300%;
+      -webkit-mask-position: 100% 0%;
+      mask-position: 100% 0%;
+      animation: burn-mask-reveal 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      will-change: mask-position, -webkit-mask-position;
+    }
+    .burn-fire-edge {
+      background: 
+        linear-gradient(224deg, 
+          transparent 48.5%, 
+          rgba(20, 5, 0, 0.95) 49%, 
+          var(--burn-c1) 49.5%, 
+          var(--burn-c2) 50%, 
+          var(--burn-c3) 50.2%,
+          transparent 51%
+        ),
+        linear-gradient(226deg, 
+          transparent 48.5%, 
+          rgba(20, 5, 0, 0.95) 49%, 
+          var(--burn-c1) 49.5%, 
+          var(--burn-c2) 50%, 
+          var(--burn-c3) 50.2%,
+          transparent 51%
+        );
+      background-size: 300% 300%;
+      background-position: 100% 0%;
+      mix-blend-mode: normal;
+      filter: drop-shadow(0 0 8px var(--burn-c2)) blur(0.5px);
+      animation: burn-fire-scan 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      will-change: background-position, opacity;
+    }
   }
-  @keyframes burn-fire-scan {
-    0% { background-position: 100% 0%; opacity: 0; }
-    5% { opacity: 1; }
-    95% { opacity: 1; }
-    100% { background-position: 0% 100%; opacity: 0; }
-  }
-  .smooth-mask-wipe {
-    -webkit-mask-image: linear-gradient(225deg, transparent 47%, rgba(0,0,0,0.6) 49%, black 51%);
-    mask-image: linear-gradient(225deg, transparent 47%, rgba(0,0,0,0.6) 49%, black 51%);
-    -webkit-mask-size: 300% 300%;
-    mask-size: 300% 300%;
-    -webkit-mask-position: 100% 0%;
-    mask-position: 100% 0%;
-    animation: burn-mask-reveal 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    will-change: mask-position, -webkit-mask-position;
-  }
-  .burn-fire-edge {
-    background: 
-      linear-gradient(224deg, 
-        transparent 48.5%, 
-        rgba(20, 5, 0, 0.95) 49%, 
-        var(--burn-c1) 49.5%, 
-        var(--burn-c2) 50%, 
-        var(--burn-c3) 50.2%,
-        transparent 51%
-      ),
-      linear-gradient(226deg, 
-        transparent 48.5%, 
-        rgba(20, 5, 0, 0.95) 49%, 
-        var(--burn-c1) 49.5%, 
-        var(--burn-c2) 50%, 
-        var(--burn-c3) 50.2%,
-        transparent 51%
-      );
-    background-size: 300% 300%;
-    background-position: 100% 0%;
-    mix-blend-mode: normal;
-    filter: drop-shadow(0 0 8px var(--burn-c2)) blur(0.5px);
-    animation: burn-fire-scan 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    will-change: background-position, opacity;
+
+  @media (max-width: 639px) {
+    @keyframes simple-fade-in {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .smooth-mask-wipe {
+      opacity: 0;
+      animation: simple-fade-in 1.5s ease-in-out forwards;
+      will-change: opacity;
+    }
+    .burn-fire-edge {
+      display: none;
+    }
   }
 
   /* Анимация бегущей строки (Турагент) */
